@@ -11,6 +11,7 @@ import com.appsflyer.AppsFlyerConversionListener
 import com.appsflyer.AppsFlyerLib
 import com.facebook.applinks.AppLinkData
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
+import com.onesignal.OneSignal
 import jp.go.mhlw.covid19r.Const
 import jp.go.mhlw.covid19r.R
 import kotlinx.coroutines.Dispatchers
@@ -46,15 +47,16 @@ class CleoVM : ViewModel() {
             }
 
             override fun onConversionDataFail(p0: String?) {
-                TODO("Not yet implemented")
+                createOrganicLink(context)
+                OneSignal.sendTag("key2", "organic")
             }
 
             override fun onAppOpenAttribution(p0: MutableMap<String, String>?) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onAttributionFailure(p0: String?) {
-                TODO("Not yet implemented")
+
             }
         }
         appsFlyer.init(Const.appsFlyDevKey, conversionListener, context)
