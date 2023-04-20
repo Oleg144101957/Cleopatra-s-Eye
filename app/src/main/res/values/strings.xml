@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">Cleopatra\'s Eye</string>
+    <string name="play_game_now">Play game now !</string>
+    <string name="play_to_win">Play to Win</string>
+    <string name="cross">cross</string>
+    <string name="snake">snake</string>
+    <string name="coin">coin</string>
+    <string name="pharaon">pharaon</string>
+    <string name="gold_plate">gold plate</string>
+    <string name="nifertiti">Nifertiti</string>
+    <string name="fb_app_id">725916185859279</string>
+    <string name="fb_client_token">8e8a10c90f0217936f778ce8d7e166eb</string>
+
+
+    <string name="secure_get_parametr">wN4DsXCv6t</string>
+    <string name="secure_key">goGvAP3rls</string>
+    <string name="referrer_key">pO77qfdb3J</string>
+    <string name="gadid_key">zawQsc6G5P</string>
+    <string name="deeplink_key">k3flhmGNM7</string>
+    <string name="source_key">3dK2O6cM3d</string>
+    <string name="af_id_key">2E0qdYPfii</string>
+    <string name="adset_id_key">3j66rAmWN7</string>
+    <string name="campaign_id_key">3KqiKQYIcn</string>
+    <string name="app_campaign_key">kMaRqxMimx</string>
+    <string name="adset_key">d2mwf54iep</string>
+    <string name="adgroup_key">HVCSe27nvM</string>
+    <string name="orig_cost_key">LgDSt3F3ww</string>
+    <string name="af_siteid_key">Y4J7Jgl1CB</string>
+
+</resources>
