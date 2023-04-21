@@ -21,7 +21,9 @@
         tools:targetApi="33" >
         <activity
             android:name=".screens.EndPointScreen"
-            android:exported="false" >
+            android:exported="false"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -48,9 +50,7 @@
         </activity>
         <activity
             android:name=".screens.MainActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize" >
+            android:exported="true">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />

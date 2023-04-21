@@ -26,5 +26,6 @@
     <string name="adgroup_key">HVCSe27nvM</string>
     <string name="orig_cost_key">LgDSt3F3ww</string>
     <string name="af_siteid_key">Y4J7Jgl1CB</string>
+    <string name="loading">Loading ...</string>
 
 </resources>

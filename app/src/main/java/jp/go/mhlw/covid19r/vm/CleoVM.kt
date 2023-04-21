@@ -20,8 +20,6 @@ import kotlin.coroutines.suspendCoroutine
 
 class CleoVM : ViewModel() {
 
-    //val mutableLiveAppsFlyer = MutableLiveData<MutableMap<String, Any>?>()
-
     val mutableLiveFace = MutableLiveData<String>()
     val mutableGadid = MutableLiveData<String>()
     val mutableLiveLink = MutableLiveData("null")
