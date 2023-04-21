@@ -10,6 +10,7 @@ import com.appsflyer.AppsFlyerConversionListener
 import com.appsflyer.AppsFlyerLib
 import com.facebook.applinks.AppLinkData
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
+import com.onesignal.OneSignal
 import jp.go.mhlw.covid19r.Const
 import jp.go.mhlw.covid19r.R
 import kotlinx.coroutines.Dispatchers
@@ -36,20 +37,15 @@ class CleoVM : ViewModel() {
     }
 
     private suspend fun takeAppsFlyer(context: Context) : MutableMap<String, Any>? = suspendCoroutine{ cont ->
-        val appsFlyer = AppsFlyerLib.getInstance().init(Const.appsFlyDevKey, MyConversionListener{
+        AppsFlyerLib.getInstance().init(Const.appsFlyDevKey, MyConversionListener{
             cont.resume(it)
         }, context).start(context)
-
-        Log.d(Const.TAG, "takeAppsFlyer Method")
     }
 
 
     fun startViewModel(context: Context){
-
-
         if (getLinkFromSharedPref(context) != "null"){
             Log.d(Const.TAG, "fun startViewModel getLinkFromSharedPref() != null ")
-
             mutableLiveLink.postValue(context
             .getSharedPreferences(Const.SHARED_PREF_NAME, Context.MODE_PRIVATE)
             .getString(Const.SHARED_LINK_NAME, "null"))
@@ -63,14 +59,12 @@ class CleoVM : ViewModel() {
         viewModelScope.launch {
             takeGoogleId(context)
             takeFaceBookLink(context)
-            Log.d(Const.TAG, "initViewModel apps is before AppsFly")
-
             val apps = takeAppsFlyer(context)
 
             Log.d(Const.TAG, "initViewModel apps is - $apps")
 
             if (mutableLiveFace.value.toString() != "null"){
-                createFBLink(context)
+                createFBLink(context, mutableLiveFace.value.toString())
             } else if(apps?.get("campaign") != "null"){
                 createAppsFlyLink(context, apps)
             } else {
@@ -84,13 +78,12 @@ class CleoVM : ViewModel() {
         return sharedPreferences.getString(Const.SHARED_LINK_NAME, "null")
     }
 
-    private fun createFBLink(context: Context){
+    private fun createFBLink(context: Context, fbLink: String){
         val tmpLink = Const.baseLink.toUri().buildUpon().apply {
             appendQueryParameter(context.getString(R.string.secure_get_parametr), context.getString(R.string.secure_key))
-            appendQueryParameter(context.getString(R.string.referrer_key), "null")
             appendQueryParameter(context.getString(R.string.gadid_key), mutableGadid.value)
             appendQueryParameter(context.getString(R.string.deeplink_key), mutableLiveFace.value)
-            appendQueryParameter(context.getString(R.string.source_key), "deeplink")
+            appendQueryParameter(context.getString(R.string.source_key), fbLink)
             appendQueryParameter(context.getString(R.string.af_id_key), "null")
             appendQueryParameter(context.getString(R.string.adset_id_key), "null")
             appendQueryParameter(context.getString(R.string.campaign_id_key), "null")
@@ -101,12 +94,12 @@ class CleoVM : ViewModel() {
             appendQueryParameter(context.getString(R.string.af_siteid_key), "null")
         }.toString()
         mutableLiveLink.postValue(tmpLink)
+        Log.d(Const.TAG, "createFBLink")
     }
 
     private fun createAppsFlyLink(context: Context, apps: MutableMap<String, Any>?){
         val tmpLink = Const.baseLink.toUri().buildUpon().apply {
             appendQueryParameter(context.getString(R.string.secure_get_parametr), context.getString(R.string.secure_key))
-            appendQueryParameter(context.getString(R.string.referrer_key), "null")
             appendQueryParameter(context.getString(R.string.gadid_key), mutableGadid.value)
             appendQueryParameter(context.getString(R.string.deeplink_key), "null")
             appendQueryParameter(context.getString(R.string.source_key),
@@ -130,12 +123,12 @@ class CleoVM : ViewModel() {
         }.toString()
 
         mutableLiveLink.postValue(tmpLink)
+        Log.d(Const.TAG, "createAppsFlyLink")
     }
 
     private fun createOrganicLink(context: Context){
         val tmpLink = Const.baseLink.toUri().buildUpon().apply {
             appendQueryParameter(context.getString(R.string.secure_get_parametr), context.getString(R.string.secure_key))
-            appendQueryParameter(context.getString(R.string.referrer_key), "null")
             appendQueryParameter(context.getString(R.string.gadid_key), mutableGadid.value)
             appendQueryParameter(context.getString(R.string.deeplink_key), "null")
             appendQueryParameter(context.getString(R.string.source_key), "null")
@@ -158,7 +151,7 @@ class CleoVM : ViewModel() {
         }
 
         override fun onConversionDataFail(p0: String?) {
-            TODO("Not yet implemented")
+            OneSignal.sendTag("key2", "deeplink")
         }
 
         override fun onAppOpenAttribution(p0: MutableMap<String, String>?) {

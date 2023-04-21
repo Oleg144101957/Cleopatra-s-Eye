@@ -37,6 +37,7 @@ class EndPointScreen : AppCompatActivity() {
         chooseCallback.onReceiveValue(it.toTypedArray())
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEndPointScreenBinding.inflate(layoutInflater)
@@ -45,7 +46,6 @@ class EndPointScreen : AppCompatActivity() {
         setWebClicks(binding.myView)
 
         val link = intent.extras?.getString(Const.SHARED_LINK_NAME).toString()
-        //https://ru.imgbb.com/
         binding.myView.loadUrl(link)
 
         val intent = Intent(this, GameCleopatra::class.java)
@@ -55,7 +55,6 @@ class EndPointScreen : AppCompatActivity() {
         binding.myView.webViewClient = object : WebViewClient(){
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
-                //Сохранить в sharedpref адрес конечной ссылки
                 if (url == "https://cleopatraseye.live/"){
                     startActivity(intent)
                 } else {
@@ -69,6 +68,7 @@ class EndPointScreen : AppCompatActivity() {
             javaScriptEnabled = true
             domStorageEnabled = true
             loadWithOverviewMode = false
+            userAgentString = binding.myView.settings.userAgentString.replace("wv", "")
         }
 
         binding.myView.webChromeClient = object : WebChromeClient(){
@@ -104,12 +104,12 @@ class EndPointScreen : AppCompatActivity() {
         }
     }
 
-    fun setWebClicks(wv : WebView){
+    private fun setWebClicks(webview : WebView){
         onBackPressedDispatcher.addCallback(this,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    if (wv.canGoBack()) {
-                        wv.goBack()
+                    if (webview.canGoBack()) {
+                        webview.goBack()
                     }
                 }
             })
