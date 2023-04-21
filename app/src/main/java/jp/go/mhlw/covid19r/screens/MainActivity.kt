@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         vm = ViewModelProvider(this)[CleoVM::class.java]
-        vm.startViewModel(applicationContext)
+        vm.startViewModel(this)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -43,15 +43,17 @@ class MainActivity : AppCompatActivity() {
             img6.startAnimation(pulsate)
         }
 
-        vm.mutableLiveLink.observe(this, Observer {
+        Log.d(Const.TAG, "Link is ${vm.mutableLiveLink.value}")
+
+        vm.mutableLiveLink.observe(this){
+            Log.d(Const.TAG, "Link is $it")
+
             if (it.toString() != "null"){
-                Log.d(Const.TAG, "Link is ${vm.mutableLiveLink.value}")
-                Log.d(Const.TAG, "it is $it")
                 val intent = Intent(this, EndPointScreen::class.java)
                 intent.putExtra(Const.SHARED_LINK_NAME, it)
                 startActivity(intent)
             }
-        })
+        }
     }
 
     override fun onBackPressed() {

@@ -1,7 +1,6 @@
 package jp.go.mhlw.covid19r.vm
 
 import android.content.Context
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.MutableLiveData
@@ -11,19 +10,18 @@ import com.appsflyer.AppsFlyerConversionListener
 import com.appsflyer.AppsFlyerLib
 import com.facebook.applinks.AppLinkData
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
-import com.onesignal.OneSignal
 import jp.go.mhlw.covid19r.Const
 import jp.go.mhlw.covid19r.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 class CleoVM : ViewModel() {
 
-    val mutableLiveAppsFlyer = MutableLiveData<MutableMap<String, Any>?>()
+    //val mutableLiveAppsFlyer = MutableLiveData<MutableMap<String, Any>?>()
+
     val mutableLiveFace = MutableLiveData<String>()
     val mutableGadid = MutableLiveData<String>()
     val mutableLiveLink = MutableLiveData("null")
@@ -39,32 +37,18 @@ class CleoVM : ViewModel() {
         }
     }
 
-    private fun takeAppsFlyer(context: Context) = viewModelScope.launch{
-        val appsFlyer = AppsFlyerLib.getInstance()
-        val conversionListener: AppsFlyerConversionListener = object : AppsFlyerConversionListener{
-            override fun onConversionDataSuccess(p0: MutableMap<String, Any>?) {
-                mutableLiveAppsFlyer.postValue(p0)
-            }
+    private suspend fun takeAppsFlyer(context: Context) : MutableMap<String, Any>? = suspendCoroutine{ cont ->
+        val appsFlyer = AppsFlyerLib.getInstance().init(Const.appsFlyDevKey, MyConversionListener{
+            cont.resume(it)
+        }, context).start(context)
 
-            override fun onConversionDataFail(p0: String?) {
-                createOrganicLink(context)
-                OneSignal.sendTag("key2", "organic")
-            }
-
-            override fun onAppOpenAttribution(p0: MutableMap<String, String>?) {
-
-            }
-
-            override fun onAttributionFailure(p0: String?) {
-
-            }
-        }
-        appsFlyer.init(Const.appsFlyDevKey, conversionListener, context)
-        appsFlyer.start(context)
+        Log.d(Const.TAG, "takeAppsFlyer Method")
     }
 
 
     fun startViewModel(context: Context){
+
+
         if (getLinkFromSharedPref(context) != "null"){
             Log.d(Const.TAG, "fun startViewModel getLinkFromSharedPref() != null ")
 
@@ -78,19 +62,19 @@ class CleoVM : ViewModel() {
     }
 
     private fun initViewModel(context: Context){
-
         viewModelScope.launch {
             takeGoogleId(context)
-            takeAppsFlyer(context)
             takeFaceBookLink(context)
-            Log.d(Const.TAG, "mutableLiveFace is ${mutableLiveFace.value.toString()} " +
-                    "mutableLiveAppsFlyer is ${mutableLiveAppsFlyer.value.toString()} " +
-                    "mutableGadid is ${mutableGadid.value.toString()}")
+            Log.d(Const.TAG, "initViewModel apps is before AppsFly")
+
+            val apps = takeAppsFlyer(context)
+
+            Log.d(Const.TAG, "initViewModel apps is - $apps")
 
             if (mutableLiveFace.value.toString() != "null"){
                 createFBLink(context)
-            } else if(mutableLiveAppsFlyer.value?.get("campaign") != "null"){
-                createAppsFlyLink(context)
+            } else if(apps?.get("campaign") != "null"){
+                createAppsFlyLink(context, apps)
             } else {
                 createOrganicLink(context)
             }
@@ -102,70 +86,89 @@ class CleoVM : ViewModel() {
         return sharedPreferences.getString(Const.SHARED_LINK_NAME, "null")
     }
 
-
     private fun createFBLink(context: Context){
         val tmpLink = Const.baseLink.toUri().buildUpon().apply {
-            appendQueryParameter(context.getString(R.string.secure_key), context.getString(R.string.secure_get_parametr))
+            appendQueryParameter(context.getString(R.string.secure_get_parametr), context.getString(R.string.secure_key))
             appendQueryParameter(context.getString(R.string.referrer_key), "null")
             appendQueryParameter(context.getString(R.string.gadid_key), mutableGadid.value)
-            appendQueryParameter(R.string.deeplink_key.toString(), mutableLiveFace.value)
-            appendQueryParameter(R.string.source_key.toString(), "deeplink")
-            appendQueryParameter(R.string.af_id_key.toString(), "null")
-            appendQueryParameter(R.string.adset_id_key.toString(), "null")
-            appendQueryParameter(R.string.campaign_id_key.toString(), "null")
-            appendQueryParameter(R.string.app_campaign_key.toString(), "null")
-            appendQueryParameter(R.string.adset_key.toString(), "null")
-            appendQueryParameter(R.string.adgroup_key.toString(), "null")
-            appendQueryParameter(R.string.orig_cost_key.toString(), "null")
-            appendQueryParameter(R.string.af_siteid_key.toString(), "null")
+            appendQueryParameter(context.getString(R.string.deeplink_key), mutableLiveFace.value)
+            appendQueryParameter(context.getString(R.string.source_key), "deeplink")
+            appendQueryParameter(context.getString(R.string.af_id_key), "null")
+            appendQueryParameter(context.getString(R.string.adset_id_key), "null")
+            appendQueryParameter(context.getString(R.string.campaign_id_key), "null")
+            appendQueryParameter(context.getString(R.string.app_campaign_key), "null")
+            appendQueryParameter(context.getString(R.string.adset_key), "null")
+            appendQueryParameter(context.getString(R.string.adgroup_key), "null")
+            appendQueryParameter(context.getString(R.string.orig_cost_key), "null")
+            appendQueryParameter(context.getString(R.string.af_siteid_key), "null")
         }.toString()
         mutableLiveLink.postValue(tmpLink)
     }
 
-    private fun createAppsFlyLink(context: Context){
+    private fun createAppsFlyLink(context: Context, apps: MutableMap<String, Any>?){
         val tmpLink = Const.baseLink.toUri().buildUpon().apply {
-            appendQueryParameter(context.getString(R.string.secure_key), context.getString(R.string.secure_get_parametr))
+            appendQueryParameter(context.getString(R.string.secure_get_parametr), context.getString(R.string.secure_key))
             appendQueryParameter(context.getString(R.string.referrer_key), "null")
             appendQueryParameter(context.getString(R.string.gadid_key), mutableGadid.value)
             appendQueryParameter(context.getString(R.string.deeplink_key), "null")
             appendQueryParameter(context.getString(R.string.source_key),
-                mutableLiveAppsFlyer.value?.get("media_source").toString())
+                apps?.get("media_source").toString())
             appendQueryParameter(context.getString(R.string.af_id_key),
-                mutableLiveAppsFlyer.value?.get("af_id").toString())
+                apps?.get("af_id").toString())
             appendQueryParameter(context.getString(R.string.adset_id_key),
-                mutableLiveAppsFlyer.value?.get("adset_id").toString())
+                apps?.get("adset_id").toString())
             appendQueryParameter(context.getString(R.string.campaign_id_key),
-                mutableLiveAppsFlyer.value?.get("campaign_id").toString())
+                apps?.get("campaign_id").toString())
             appendQueryParameter(context.getString(R.string.app_campaign_key),
-                mutableLiveAppsFlyer.value?.get("campaign").toString())
+                apps?.get("campaign").toString())
             appendQueryParameter(context.getString(R.string.adset_key),
-                mutableLiveAppsFlyer.value?.get("adset").toString())
+                apps?.get("adset").toString())
             appendQueryParameter(context.getString(R.string.adgroup_key),
-                mutableLiveAppsFlyer.value?.get("adgroup").toString())
+                apps?.get("adgroup").toString())
             appendQueryParameter(context.getString(R.string.orig_cost_key),
-                mutableLiveAppsFlyer.value?.get("orig_cost").toString())
+                apps?.get("orig_cost").toString())
             appendQueryParameter(context.getString(R.string.af_siteid_key),
-                mutableLiveAppsFlyer.value?.get("af_siteid").toString())
+                apps?.get("af_siteid").toString())
         }.toString()
+
         mutableLiveLink.postValue(tmpLink)
     }
 
     private fun createOrganicLink(context: Context){
         val tmpLink = Const.baseLink.toUri().buildUpon().apply {
-            appendQueryParameter(context.getString(R.string.secure_key), context.getString(R.string.secure_get_parametr))
-            appendQueryParameter(R.string.referrer_key.toString(), "null")
-            appendQueryParameter(R.string.gadid_key.toString(), mutableGadid.value)
-            appendQueryParameter(R.string.deeplink_key.toString(), "null")
-            appendQueryParameter(R.string.source_key.toString(), "null")
-            appendQueryParameter(R.string.af_id_key.toString(), "null")
-            appendQueryParameter(R.string.adset_id_key.toString(), "null")
-            appendQueryParameter(R.string.campaign_id_key.toString(), "null")
-            appendQueryParameter(R.string.app_campaign_key.toString(), "null")
-            appendQueryParameter(R.string.adset_key.toString(), "null")
-            appendQueryParameter(R.string.adgroup_key.toString(), "null")
-            appendQueryParameter(R.string.orig_cost_key.toString(), "null")
-            appendQueryParameter(R.string.af_siteid_key.toString(), "null")
+            appendQueryParameter(context.getString(R.string.secure_get_parametr), context.getString(R.string.secure_key))
+            appendQueryParameter(context.getString(R.string.referrer_key), "null")
+            appendQueryParameter(context.getString(R.string.gadid_key), mutableGadid.value)
+            appendQueryParameter(context.getString(R.string.deeplink_key), "null")
+            appendQueryParameter(context.getString(R.string.source_key), "null")
+            appendQueryParameter(context.getString(R.string.af_id_key), "null")
+            appendQueryParameter(context.getString(R.string.adset_id_key), "null")
+            appendQueryParameter(context.getString(R.string.campaign_id_key), "null")
+            appendQueryParameter(context.getString(R.string.app_campaign_key), "null")
+            appendQueryParameter(context.getString(R.string.adset_key), "null")
+            appendQueryParameter(context.getString(R.string.adgroup_key), "null")
+            appendQueryParameter(context.getString(R.string.orig_cost_key), "null")
+            appendQueryParameter(context.getString(R.string.af_siteid_key), "null")
         }.toString()
         mutableLiveLink.postValue(tmpLink)
+    }
+
+
+    inner class MyConversionListener(private val block: (MutableMap<String, Any>?) -> Unit) : AppsFlyerConversionListener{
+        override fun onConversionDataSuccess(p0: MutableMap<String, Any>?) {
+            block(p0)
+        }
+
+        override fun onConversionDataFail(p0: String?) {
+            TODO("Not yet implemented")
+        }
+
+        override fun onAppOpenAttribution(p0: MutableMap<String, String>?) {
+            TODO("Not yet implemented")
+        }
+
+        override fun onAttributionFailure(p0: String?) {
+            TODO("Not yet implemented")
+        }
     }
 }

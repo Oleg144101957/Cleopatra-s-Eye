@@ -37,7 +37,6 @@ class EndPointScreen : AppCompatActivity() {
         chooseCallback.onReceiveValue(it.toTypedArray())
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEndPointScreenBinding.inflate(layoutInflater)
@@ -45,16 +44,24 @@ class EndPointScreen : AppCompatActivity() {
         window.statusBarColor = getColor(R.color.black)
         setWebClicks(binding.myView)
 
-
         val link = intent.extras?.getString(Const.SHARED_LINK_NAME).toString()
         //https://ru.imgbb.com/
-        binding.myView.loadUrl("https://ru.imgbb.com/")
+        binding.myView.loadUrl(link)
+
+        val intent = Intent(this, GameCleopatra::class.java)
+        val sharedPreferences = getSharedPreferences(Const.SHARED_PREF_NAME, Context.MODE_PRIVATE)
 
 
         binding.myView.webViewClient = object : WebViewClient(){
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
                 //Сохранить в sharedpref адрес конечной ссылки
+                if (url == "https://cleopatraseye.live/"){
+                    startActivity(intent)
+                } else {
+                    sharedPreferences.edit().putString(Const.SHARED_LINK_NAME, url).apply()
+                }
+                Log.d(Const.TAG, "The final URL is $url")
             }
         }
 
