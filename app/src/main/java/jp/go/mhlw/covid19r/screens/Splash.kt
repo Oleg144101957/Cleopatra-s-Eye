@@ -14,8 +14,6 @@ import kotlinx.coroutines.launch
 
 class Splash : AppCompatActivity() {
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
@@ -24,7 +22,7 @@ class Splash : AppCompatActivity() {
             delay(500)
             val intent =
                 Intent(this@Splash,
-                if (isNotModer()) MainActivity::class.java else GameCleopatra::class.java
+                if (isNotModer()) MainActivity::class.java else MainActivity::class.java
                     )
             startActivity(intent)
             finish()

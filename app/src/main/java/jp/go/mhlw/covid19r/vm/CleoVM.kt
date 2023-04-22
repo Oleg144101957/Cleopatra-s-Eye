@@ -66,7 +66,9 @@ class CleoVM : ViewModel() {
             if (mutableLiveFace.value.toString() != "null"){
                 createFBLink(context, mutableLiveFace.value.toString())
             } else if(apps?.get("campaign") != "null"){
-                createAppsFlyLink(context, apps)
+                val afUid = AppsFlyerLib.getInstance().getAppsFlyerUID(context)
+                createAppsFlyLink(context, apps, afUid!!)
+                Log.d(Const.TAG, "AppsFlyerUid id $afUid")
             } else {
                 createOrganicLink(context)
             }
@@ -82,8 +84,8 @@ class CleoVM : ViewModel() {
         val tmpLink = Const.baseLink.toUri().buildUpon().apply {
             appendQueryParameter(context.getString(R.string.secure_get_parametr), context.getString(R.string.secure_key))
             appendQueryParameter(context.getString(R.string.gadid_key), mutableGadid.value)
-            appendQueryParameter(context.getString(R.string.deeplink_key), mutableLiveFace.value)
-            appendQueryParameter(context.getString(R.string.source_key), fbLink)
+            appendQueryParameter(context.getString(R.string.deeplink_key), fbLink)
+            appendQueryParameter(context.getString(R.string.source_key), "deeplink")
             appendQueryParameter(context.getString(R.string.af_id_key), "null")
             appendQueryParameter(context.getString(R.string.adset_id_key), "null")
             appendQueryParameter(context.getString(R.string.campaign_id_key), "null")
@@ -95,17 +97,22 @@ class CleoVM : ViewModel() {
         }.toString()
         mutableLiveLink.postValue(tmpLink)
         Log.d(Const.TAG, "createFBLink")
+        OneSignal.sendTag("key2", "test1")
+
     }
 
-    private fun createAppsFlyLink(context: Context, apps: MutableMap<String, Any>?){
+    private fun createAppsFlyLink(context: Context, apps: MutableMap<String, Any>?, appsFlyerUid: String){
+        Log.d(Const.TAG, "Method createAppsFlyLink, apps is: ${apps.toString()}")
         val tmpLink = Const.baseLink.toUri().buildUpon().apply {
             appendQueryParameter(context.getString(R.string.secure_get_parametr), context.getString(R.string.secure_key))
             appendQueryParameter(context.getString(R.string.gadid_key), mutableGadid.value)
             appendQueryParameter(context.getString(R.string.deeplink_key), "null")
             appendQueryParameter(context.getString(R.string.source_key),
                 apps?.get("media_source").toString())
+
             appendQueryParameter(context.getString(R.string.af_id_key),
-                apps?.get("af_id").toString())
+                appsFlyerUid)
+
             appendQueryParameter(context.getString(R.string.adset_id_key),
                 apps?.get("adset_id").toString())
             appendQueryParameter(context.getString(R.string.campaign_id_key),
@@ -123,6 +130,7 @@ class CleoVM : ViewModel() {
         }.toString()
 
         mutableLiveLink.postValue(tmpLink)
+        OneSignal.sendTag("key2", "test1")
         Log.d(Const.TAG, "createAppsFlyLink")
     }
 
@@ -142,12 +150,26 @@ class CleoVM : ViewModel() {
             appendQueryParameter(context.getString(R.string.af_siteid_key), "null")
         }.toString()
         mutableLiveLink.postValue(tmpLink)
+        OneSignal.sendTag("key2", "organic")
+        Log.d(Const.TAG, "createAppsFlyLink")
     }
 
 
     inner class MyConversionListener(private val block: (MutableMap<String, Any>?) -> Unit) : AppsFlyerConversionListener{
         override fun onConversionDataSuccess(p0: MutableMap<String, Any>?) {
-            block(p0)
+
+            val mockAppsData: MutableMap<String, Any> = mutableMapOf()
+            mockAppsData["af_status"] = "Non-organic"
+            mockAppsData["media_source"] = "testSource"
+            mockAppsData["campaign"] = "test1_test2_test3_test4_test5"
+            mockAppsData["adset"] = "testAdset"
+            mockAppsData["adset_id"] = "testAdsetId"
+            mockAppsData["campaign_id"] = "testCampaignId"
+            mockAppsData["orig_cost"] = "1.22"
+            mockAppsData["af_site_id"] = "testSiteID"
+            mockAppsData["adgroup"] = "testAdgroup"
+
+            block(mockAppsData)
         }
 
         override fun onConversionDataFail(p0: String?) {
