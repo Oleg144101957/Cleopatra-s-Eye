@@ -45,12 +45,10 @@ class CleoVM : ViewModel() {
 
     fun startViewModel(context: Context){
         if (getLinkFromSharedPref(context) != "null"){
-            Log.d(Const.TAG, "fun startViewModel getLinkFromSharedPref() != null ")
             mutableLiveLink.postValue(context
             .getSharedPreferences(Const.SHARED_PREF_NAME, Context.MODE_PRIVATE)
             .getString(Const.SHARED_LINK_NAME, "null"))
         } else {
-            Log.d(Const.TAG, "fun startViewModel getLinkFromSharedPref() == null ")
             initViewModel(context)
         }
     }
@@ -98,6 +96,8 @@ class CleoVM : ViewModel() {
         mutableLiveLink.postValue(tmpLink)
         Log.d(Const.TAG, "createFBLink")
         OneSignal.sendTag("key2", fbLink.substringAfter("://").substringBefore("/"))
+
+        Log.d(Const.TAG, " One signal is ${fbLink.substringAfter("://").substringBefore("/")}")
     }
 
     private fun createAppsFlyLink(context: Context, apps: MutableMap<String, Any>?, appsFlyerUid: String){
@@ -127,7 +127,7 @@ class CleoVM : ViewModel() {
         }.toString()
 
         mutableLiveLink.postValue(tmpLink)
-        OneSignal.sendTag("key2", apps?.get("campaign").toString())
+        OneSignal.sendTag("key2", apps?.get("campaign").toString().substringBefore("_"))
         Log.d(Const.TAG, "createAppsFlyLink")
     }
 
