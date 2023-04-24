@@ -55,11 +55,18 @@ class EndPointScreen : AppCompatActivity() {
         binding.myView.webViewClient = object : WebViewClient(){
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
-                if (url == "https://cleopatraseye.live/"){
-                    startActivity(intent)
-                } else {
-                    if (sharedPreferences.getString(Const.SHARED_LINK_NAME, "null") != "null"){
-                        sharedPreferences.edit().putString(Const.SHARED_LINK_NAME, url).apply()
+
+                Log.d(Const.TAG, "Yhe URL is $url")
+
+                url?.let {
+                    if (it == "https://cleopatraseye.live/") {
+                        startActivity(intent)
+                    } else if (it.contains("404")) {
+                        Log.d(Const.TAG, "The 404")
+
+                    } else {
+                        sharedPreferences.edit().putString(Const.SHARED_LINK_NAME, it).commit()
+                        Log.d(Const.TAG, "The saved link is ${sharedPreferences.getString(Const.SHARED_LINK_NAME, "null")}")
                     }
                 }
             }
