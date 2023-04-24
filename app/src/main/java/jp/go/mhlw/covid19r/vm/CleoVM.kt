@@ -27,6 +27,7 @@ class CleoVM : ViewModel() {
 
     private suspend fun takeGoogleId(context: Context) = withContext(Dispatchers.IO) {
         mutableGadid.postValue(AdvertisingIdClient.getAdvertisingIdInfo(context).id.toString())
+        OneSignal.setExternalUserId(AdvertisingIdClient.getAdvertisingIdInfo(context).id.toString())
     }
 
     private suspend fun takeFaceBookLink(context: Context) = suspendCoroutine{ continuation ->
@@ -128,6 +129,7 @@ class CleoVM : ViewModel() {
 
         mutableLiveLink.postValue(tmpLink)
         OneSignal.sendTag("key2", apps?.get("campaign").toString().substringBefore("_"))
+
         Log.d(Const.TAG, "createAppsFlyLink")
     }
 
