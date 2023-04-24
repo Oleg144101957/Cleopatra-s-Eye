@@ -97,7 +97,7 @@ class CleoVM : ViewModel() {
         }.toString()
         mutableLiveLink.postValue(tmpLink)
         Log.d(Const.TAG, "createFBLink")
-        OneSignal.sendTag("key2", "test1")
+        OneSignal.sendTag("key2", fbLink.replace("myapp://", "").substringBefore("/"))
 
     }
 
@@ -109,10 +109,8 @@ class CleoVM : ViewModel() {
             appendQueryParameter(context.getString(R.string.deeplink_key), "null")
             appendQueryParameter(context.getString(R.string.source_key),
                 apps?.get("media_source").toString())
-
             appendQueryParameter(context.getString(R.string.af_id_key),
                 appsFlyerUid)
-
             appendQueryParameter(context.getString(R.string.adset_id_key),
                 apps?.get("adset_id").toString())
             appendQueryParameter(context.getString(R.string.campaign_id_key),
@@ -130,7 +128,7 @@ class CleoVM : ViewModel() {
         }.toString()
 
         mutableLiveLink.postValue(tmpLink)
-        OneSignal.sendTag("key2", "test1")
+        OneSignal.sendTag("key2", apps?.get("campaign").toString())
         Log.d(Const.TAG, "createAppsFlyLink")
     }
 
