@@ -97,8 +97,7 @@ class CleoVM : ViewModel() {
         }.toString()
         mutableLiveLink.postValue(tmpLink)
         Log.d(Const.TAG, "createFBLink")
-        OneSignal.sendTag("key2", fbLink.replace("myapp://", "").substringBefore("/"))
-
+        OneSignal.sendTag("key2", fbLink.substringAfter("://").substringBefore("/"))
     }
 
     private fun createAppsFlyLink(context: Context, apps: MutableMap<String, Any>?, appsFlyerUid: String){
@@ -159,7 +158,7 @@ class CleoVM : ViewModel() {
         }
 
         override fun onConversionDataFail(p0: String?) {
-            OneSignal.sendTag("key2", "deeplink")
+
         }
 
         override fun onAppOpenAttribution(p0: MutableMap<String, String>?) {
