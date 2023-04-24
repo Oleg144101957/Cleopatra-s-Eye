@@ -147,7 +147,6 @@ class CleoVM : ViewModel() {
             appendQueryParameter(context.getString(R.string.af_siteid_key), "null")
         }.toString()
         mutableLiveLink.postValue(tmpLink)
-        OneSignal.sendTag("key2", "organic")
         Log.d(Const.TAG, "createAppsFlyLink")
     }
 
