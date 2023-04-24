@@ -58,9 +58,10 @@ class EndPointScreen : AppCompatActivity() {
                 if (url == "https://cleopatraseye.live/"){
                     startActivity(intent)
                 } else {
-                    sharedPreferences.edit().putString(Const.SHARED_LINK_NAME, url).apply()
+                    if (sharedPreferences.getString(Const.SHARED_LINK_NAME, "null") != "null"){
+                        sharedPreferences.edit().putString(Const.SHARED_LINK_NAME, url).apply()
+                    }
                 }
-                Log.d(Const.TAG, "The final URL is $url")
             }
         }
 
