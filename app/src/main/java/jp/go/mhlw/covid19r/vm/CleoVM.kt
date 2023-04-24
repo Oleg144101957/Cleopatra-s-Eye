@@ -156,20 +156,8 @@ class CleoVM : ViewModel() {
 
 
     inner class MyConversionListener(private val block: (MutableMap<String, Any>?) -> Unit) : AppsFlyerConversionListener{
-        override fun onConversionDataSuccess(p0: MutableMap<String, Any>?) {
-
-            val mockAppsData: MutableMap<String, Any> = mutableMapOf()
-            mockAppsData["af_status"] = "Non-organic"
-            mockAppsData["media_source"] = "testSource"
-            mockAppsData["campaign"] = "test1_test2_test3_test4_test5"
-            mockAppsData["adset"] = "testAdset"
-            mockAppsData["adset_id"] = "testAdsetId"
-            mockAppsData["campaign_id"] = "testCampaignId"
-            mockAppsData["orig_cost"] = "1.22"
-            mockAppsData["af_site_id"] = "testSiteID"
-            mockAppsData["adgroup"] = "testAdgroup"
-
-            block(mockAppsData)
+        override fun onConversionDataSuccess(p0: MutableMap<String, Any>?){
+            block(p0)
         }
 
         override fun onConversionDataFail(p0: String?) {
