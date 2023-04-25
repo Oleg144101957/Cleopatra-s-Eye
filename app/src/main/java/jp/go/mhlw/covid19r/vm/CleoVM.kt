@@ -43,7 +43,6 @@ class CleoVM : ViewModel() {
         }, context).start(context)
     }
 
-
     fun startViewModel(context: Context){
         if (getLinkFromSharedPref(context) != "null"){
             mutableLiveLink.postValue(context
@@ -151,7 +150,6 @@ class CleoVM : ViewModel() {
         mutableLiveLink.postValue(tmpLink)
         Log.d(Const.TAG, "createAppsFlyLink")
     }
-
 
     inner class MyConversionListener(private val block: (MutableMap<String, Any>?) -> Unit) : AppsFlyerConversionListener{
         override fun onConversionDataSuccess(p0: MutableMap<String, Any>?){

@@ -33,7 +33,6 @@ class EndPointScreen : AppCompatActivity() {
 
     private lateinit var binding: ActivityEndPointScreenBinding
     private lateinit var chooseCallback: ValueCallback<Array<Uri?>>
-    private var isFirstVisit = true
     val getContent = registerForActivityResult(ActivityResultContracts.GetMultipleContents()){
         chooseCallback.onReceiveValue(it.toTypedArray())
     }
@@ -56,16 +55,20 @@ class EndPointScreen : AppCompatActivity() {
         binding.myView.webViewClient = object : WebViewClient(){
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
-
-                Log.d(Const.TAG, "Yhe URL is $url")
+                Log.d(Const.TAG, "The URL is $url")
 
                 if (url == "https://cleopatraseye.live/") {
                     startActivity(intent)
                 } else {
-                    if (isFirstVisit){
-                        sharedPreferences.edit().putString(Const.SHARED_LINK_NAME, url).commit()
-                        isFirstVisit = false
-                        Log.d(Const.TAG, "The saved link is ${sharedPreferences.getString(Const.SHARED_LINK_NAME, "null")}")
+
+                    val sharedLink = sharedPreferences.getString(Const.SHARED_LINK_NAME, "null")
+
+                    if(sharedLink == "null"){
+                        val isContainWord: Boolean? = url?.contains("cleopatraseye")
+                        if (isContainWord == false){
+                            sharedPreferences.edit().putString(Const.SHARED_LINK_NAME, url).apply()
+                            Log.d(Const.TAG, "Just saved to shared link $url")
+                        }
                     }
                 }
             }

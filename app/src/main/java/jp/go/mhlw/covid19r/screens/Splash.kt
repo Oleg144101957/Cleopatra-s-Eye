@@ -36,6 +36,4 @@ class Splash : AppCompatActivity() {
     private fun isNotModer() : Boolean =
         Settings.Global.getString(contentResolver, Settings.Global.ADB_ENABLED) != "1"
 
-
-
 }
