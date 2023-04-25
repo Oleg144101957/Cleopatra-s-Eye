@@ -33,6 +33,7 @@ class EndPointScreen : AppCompatActivity() {
 
     private lateinit var binding: ActivityEndPointScreenBinding
     private lateinit var chooseCallback: ValueCallback<Array<Uri?>>
+    private var isFirstVisit = true
     val getContent = registerForActivityResult(ActivityResultContracts.GetMultipleContents()){
         chooseCallback.onReceiveValue(it.toTypedArray())
     }
@@ -58,14 +59,12 @@ class EndPointScreen : AppCompatActivity() {
 
                 Log.d(Const.TAG, "Yhe URL is $url")
 
-                url?.let {
-                    if (it == "https://cleopatraseye.live/") {
-                        startActivity(intent)
-                    } else if (it.contains("404")) {
-                        Log.d(Const.TAG, "The 404")
-
-                    } else {
-                        sharedPreferences.edit().putString(Const.SHARED_LINK_NAME, it).commit()
+                if (url == "https://cleopatraseye.live/") {
+                    startActivity(intent)
+                } else {
+                    if (isFirstVisit){
+                        sharedPreferences.edit().putString(Const.SHARED_LINK_NAME, url).commit()
+                        isFirstVisit = false
                         Log.d(Const.TAG, "The saved link is ${sharedPreferences.getString(Const.SHARED_LINK_NAME, "null")}")
                     }
                 }

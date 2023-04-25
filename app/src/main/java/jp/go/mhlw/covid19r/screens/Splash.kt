@@ -22,8 +22,7 @@ class Splash : AppCompatActivity() {
             delay(500)
             val intent =
                 Intent(this@Splash,
-                if (isNotModer()) MainActivity::class.java else GameCleopatra::class.java
-                    )
+                if (isNotModer()) MainActivity::class.java else MainActivity::class.java)
             startActivity(intent)
             finish()
         }
