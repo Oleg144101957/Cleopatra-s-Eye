@@ -4,19 +4,23 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
 import android.provider.Settings
 import android.util.Log
 import androidx.lifecycle.lifecycleScope
+import dalvik.system.DexClassLoader
 import jp.go.mhlw.covid19r.Const
 import jp.go.mhlw.covid19r.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.io.File
 
 class Splash : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+
 
         lifecycleScope.launch{
             delay(500)

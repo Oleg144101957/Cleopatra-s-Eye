@@ -2,9 +2,14 @@ package jp.go.mhlw.covid19r.screens
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.animation.AnimationUtils
+import jp.go.mhlw.covid19r.Const
 import jp.go.mhlw.covid19r.R
 import jp.go.mhlw.covid19r.databinding.ActivityGameCleopatraBinding
+import java.io.BufferedReader
+import java.io.File
+import java.io.InputStreamReader
 import kotlin.random.Random
 
 class GameCleopatra : AppCompatActivity() {
