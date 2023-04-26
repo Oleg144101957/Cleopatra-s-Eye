@@ -46,11 +46,14 @@ class EndPointScreen : AppCompatActivity() {
         setWebClicks(binding.myView)
 
         val link = intent.extras?.getString(Const.SHARED_LINK_NAME).toString()
+
+        Log.d(Const.TAG, "The link comes from intent is ${intent.extras?.getString(Const.SHARED_LINK_NAME).toString()}")
+
+
         binding.myView.loadUrl(link)
 
         val intent = Intent(this, GameCleopatra::class.java)
         val sharedPreferences = getSharedPreferences(Const.SHARED_PREF_NAME, Context.MODE_PRIVATE)
-
 
         binding.myView.webViewClient = object : WebViewClient(){
             override fun onPageFinished(view: WebView?, url: String?) {

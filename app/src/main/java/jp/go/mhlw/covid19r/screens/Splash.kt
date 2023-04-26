@@ -21,7 +21,6 @@ class Splash : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-
         lifecycleScope.launch{
             delay(500)
             val intent =
