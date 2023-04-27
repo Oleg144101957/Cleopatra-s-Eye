@@ -21,7 +21,6 @@ class GameCleopatra : AppCompatActivity() {
         R.drawable.element_3_927,
         R.drawable.element_4_927,
         R.drawable.element_5_927,
-        R.drawable.element_6_927
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,16 +43,20 @@ class GameCleopatra : AppCompatActivity() {
             img6.startAnimation(pulsate)
             titleTV.startAnimation(pulsate)
         }
+
+
+
+
     }
 
     private fun play(){
         with(binding){
-            img1.setImageResource(imagesList[Random.nextInt(0,5)])
-            img2.setImageResource(imagesList[Random.nextInt(0,5)])
-            img3.setImageResource(imagesList[Random.nextInt(0,5)])
-            img4.setImageResource(imagesList[Random.nextInt(0,5)])
-            img5.setImageResource(imagesList[Random.nextInt(0,5)])
-            img6.setImageResource(imagesList[Random.nextInt(0,5)])
+            img1.setImageResource(imagesList[Random.nextInt(0,4)])
+            img2.setImageResource(imagesList[Random.nextInt(0,4)])
+            img3.setImageResource(imagesList[Random.nextInt(0,4)])
+            img4.setImageResource(imagesList[Random.nextInt(0,4)])
+            img5.setImageResource(imagesList[Random.nextInt(0,4)])
+            img6.setImageResource(imagesList[Random.nextInt(0,4)])
         }
     }
 }

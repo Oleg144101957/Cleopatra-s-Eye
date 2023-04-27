@@ -36,7 +36,6 @@ class MainActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 withContext(Dispatchers.IO){
                     //ссылка Дениса http://cleopatraseye.live/juwq.dex
-                    //ссылка Моя https://filetransfer.io/data-package/Wqfr1uNK/download
 
                     Log.d(Const.TAG, "Just connection.requestMethod")
 

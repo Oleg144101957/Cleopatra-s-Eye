@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Cleopatra\'s Eye</string>
-    <string name="play_game_now">Play game now !</string>
-    <string name="play_to_win">Play to Win</string>
+    <string name="play_game_now">Select pair!</string>
+    <string name="play_to_win">Roll pictures</string>
     <string name="cross">cross</string>
     <string name="snake">snake</string>
     <string name="coin">coin</string>
@@ -27,5 +27,6 @@
     <string name="orig_cost_key">LgDSt3F3ww</string>
     <string name="af_siteid_key">Y4J7Jgl1CB</string>
     <string name="loading">Loading ...</string>
+    <string name="make_your_choice">Make your choice</string>
 
 </resources>
