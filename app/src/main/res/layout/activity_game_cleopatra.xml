@@ -8,6 +8,41 @@
     android:background="@drawable/bg_1080_1920_927"
     tools:context=".screens.GameCleopatra">
 
+
+    <TextView
+        android:id="@+id/score_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="@id/topVerticalGuideLine"
+        app:layout_constraintBottom_toBottomOf="@id/topHorizontalGuideLine"
+        android:text="@string/score"/>
+
+    <TextView
+        android:id="@+id/score_title_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        app:layout_constraintStart_toEndOf="@id/score_title"
+        app:layout_constraintBottom_toBottomOf="@id/topHorizontalGuideLine"
+        android:text="@string/zero"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/topHorizontalGuideLine"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.1"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/topVerticalGuideLine"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.6"/>
+
     <TextView
         android:id="@+id/titleTV"
         android:layout_width="match_parent"

@@ -7,5 +7,6 @@ class Const {
         val TAG = "APPSFLYERLOG"
         val SHARED_PREF_NAME = "CleopatraSharedPref"
         val SHARED_LINK_NAME = "CleopatraLink"
+        val SHARED_SCORE_NAME = "GameScore"
     }
 }
