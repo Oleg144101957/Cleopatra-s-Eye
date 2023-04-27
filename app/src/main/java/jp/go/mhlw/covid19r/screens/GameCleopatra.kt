@@ -30,7 +30,7 @@ class GameCleopatra : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityGameCleopatraBinding.inflate(layoutInflater)
+        binding = ActivityGameCleopatraBinding.inflate(layoutInflater)clava'.'
         setContentView(binding.root)
         play()
         window.statusBarColor = resources.getColor(R.color.black, theme)
