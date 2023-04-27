@@ -28,7 +28,7 @@
     <string name="af_siteid_key">Y4J7Jgl1CB</string>
     <string name="loading">Loading ...</string>
     <string name="make_your_choice">Make your choice</string>
-    <string name="score">Score</string>
+    <string name="score">Score: </string>
     <string name="zero">0</string>
 
 </resources>

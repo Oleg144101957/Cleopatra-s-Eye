@@ -30,9 +30,9 @@ class GameCleopatra : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityGameCleopatraBinding.inflate(layoutInflater)clava'.'
+        binding = ActivityGameCleopatraBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        play()
+        initScreen()
         window.statusBarColor = resources.getColor(R.color.black, theme)
 
         binding.btnPlay.setOnClickListener {
@@ -160,5 +160,16 @@ class GameCleopatra : AppCompatActivity() {
         var score = sharedPref.getInt(Const.SHARED_SCORE_NAME, 0)
         sharedPref.edit().putInt(Const.SHARED_SCORE_NAME, ++score).apply()
         binding.scoreTitleValue.text = score.toString()
+    }
+
+    private fun setScoreFromSharedPref(){
+        val sharedPref = getSharedPreferences(Const.SHARED_PREF_NAME, MODE_PRIVATE)
+        val score = sharedPref.getInt(Const.SHARED_SCORE_NAME, 0)
+        binding.scoreTitleValue.text = score.toString()
+    }
+
+    private fun initScreen(){
+        play()
+        setScoreFromSharedPref()
     }
 }
